@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Pour Céleste 💖</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial Black', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: background 0.1s;
+        }
+
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 400px;
+            z-index: 10;
+        }
+
+        button {
+            padding: 12px 25px;
+            margin: 10px;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .yes { background-color: #e91e63; color: white; font-weight: bold; }
+        .no { background-color: #ddd; }
+
+        /* Effet Hacker / Erreur */
+        .hack-screen {
+            background-color: #ff0000 !important;
+            animation: flash 0.1s infinite;
+        }
+
+        @keyframes flash {
+            0% { background-color: #ff0000; }
+            50% { background-color: #000000; }
+            100% { background-color: #ff0000; }
+        }
+
+        .error-msg {
+            position: fixed;
+            color: white;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        /* Styles Final et Questions */
+        .message-final {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            font-size: 12vw;
+            color: white;
+            font-weight: 900;
+            text-shadow: 5px 5px 20px rgba(0,0,0,0.4);
+            z-index: 100;
+            text-transform: uppercase;
+        }
+
+        .heart {
+            position: fixed;
+            top: -10px;
+            font-size: 24px;
+            animation: fall linear forwards;
+            z-index: 1;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh); opacity: 0; }
+        }
+
+        .moving-question {
+            position: fixed;
+            font-size: 35px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+            z-index: 5;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="card" id="mainCard">
+    <h1>💌 Question pour Céleste 💌</h1>
+    <p>Céleste, veux-tu être ma Valentine cette année ? 💖</p>
+    <button class="yes" id="yesBtn">Oui 🥰</button>
+    <button class="no" id="noBtn">Non 😢</button>
+</div>
+
+<script>
+    let clickCount = 0;
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+
+    // Tentative de clic sur NON = HACK
+    noBtn.addEventListener("click", triggerHack);
+    noBtn.addEventListener("mouseover", () => {
+        // Le bouton s'enfuit...
+        const x = Math.random() * (window.innerWidth - 100);
+        const y = Math.random() * (window.innerHeight - 50);
+        noBtn.style.position = "absolute";
+        noBtn.style.left = x + "px";
+        noBtn.style.top = y + "px";
+        
+        // ...mais après 3 tentatives, on lance l'erreur quand même !
+        clickCount++;
+        if(clickCount > 3) triggerHack();
+    });
+
+    function triggerHack() {
+        document.body.classList.add("hack-screen");
+        document.body.innerHTML = "";
+        
+        setInterval(() => {
+            const err = document.createElement("div");
+            err.classList.add("error-msg");
+            err.style.left = Math.random() * 100 + "vw";
+            err.style.top = Math.random() * 100 + "vh";
+            err.style.fontSize = (Math.random() * 40 + 20) + "px";
+            err.innerHTML = "ERROR 505: SYSTEM FAILURE - CHOICE NOT ALLOWED";
+            document.body.appendChild(err);
+        }, 50);
+
+        setTimeout(() => {
+            alert("ALERTE : ERREUR CRITIQUE. Le système a détecté une mauvaise réponse. Redémarrage forcé vers le mode AMOUR...");
+            location.reload(); // Redémarre la page pour lui redonner une chance
+        }, 2000);
+    }
+
+    // Logique du OUI
+    yesBtn.addEventListener("click", () => {
+        clickCount = 0; // Reset pour le bouton géant
+        document.getElementById("mainCard").style.display = "none";
+
+        const question = document.createElement("div");
+        question.classList.add("moving-question");
+        question.id = "movingQ";
+        question.innerHTML = "Céleste, es-tu sûre ? 😏";
+        document.body.appendChild(question);
+
+        setInterval(() => {
+            question.style.left = Math.random() * (window.innerWidth - 300) + "px";
+            question.style.top = Math.random() * (window.innerHeight - 100) + "px";
+        }, 600);
+
+        const bigYes = document.createElement("button");
+        bigYes.innerHTML = "OUI ! 😍";
+        bigYes.classList.add("yes");
+        bigYes.id = "bigYes";
+        bigYes.style.position = "fixed";
+        bigYes.style.bottom = "10%";
+        bigYes.style.left = "50%";
+        bigYes.style.transform = "translateX(-50%)";
+        bigYes.style.zIndex = "1000";
+        document.body.appendChild(bigYes);
+
+        bigYes.addEventListener("click", () => {
+            clickCount++;
+            bigYes.style.transform = "translateX(-50%) scale(" + (1 + clickCount * 0.9) + ")";
+            if (clickCount > 5) startLove();
+        });
+    });
+
+    function startLove() {
+        document.body.innerHTML = "";
+        document.body.style.background = "#ff4d6d";
+        const message = document.createElement("div");
+        message.classList.add("message-final");
+        message.innerHTML = "YOUPIIIIIIIIIIII";
+        document.body.appendChild(message);
+        setInterval(() => {
+            const heart = document.createElement("div");
+            heart.classList.add("heart");
+            heart.innerHTML = "💖";
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.animationDuration = (Math.random() * 2 + 1) + "s";
+            document.body.appendChild(heart);
+        }, 100);
+    }
+</script>
+
+</body>
+</html>
+
